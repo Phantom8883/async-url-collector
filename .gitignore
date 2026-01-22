@@ -21,6 +21,8 @@ Thumbs.db
 downloads/
 manifest.jsonl
 *.jsonl
+async_await.md
+plan.txt
 
 # Secrets
 .env
