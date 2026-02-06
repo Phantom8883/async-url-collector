@@ -1,15 +1,27 @@
-from .io_utils import read_urls
-from .downloader import download_one
+
 import asyncio
 from pathlib import Path
-
+from parsers.base import PixivParser
 
 
 async def main():
-    project_dir = Path(__file__).resolve().parents[1]
-    urls_path = project_dir / 'urls.txt' # 
-    out_dir = project_dir / 'downloads' # получаем url папки для загрузки
-    urls = read_urls(urls_path)
+    parser = PixivParser()
+    #project_dir = Path(__file__).resolve().parents[1]
+    #urls_path = project_dir / 'urls.txt' # 
+    #out_dir = project_dir / 'downloads' # получаем url папки для загрузки
+
+
+
+
+
+    urls = await parser.crawl_user_illusts() # type: ignore
+
+
+
+
+
+
+
     if not urls:
         print(f"Ошибка urls.txt пуст")
     

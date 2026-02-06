@@ -1,5 +1,7 @@
 aiohttp==3.12.15
 aiofiles==24.1.0
+beautifulsoup4==4.12.3
+requests==2.31.0  # для сравнения синхронного подхода в async_tutorial.py
 
 
 
