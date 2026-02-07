@@ -18,6 +18,7 @@ Thumbs.db
 *.log
 
 # Project outputs
+async_url_collector_памятки/
 downloads/
 manifest.jsonl
 *.jsonl
