@@ -173,11 +173,8 @@ def filter_new_urls(urls: List[str], manifest_path: Optional[Path] = None) -> Li
     Returns:
         List[str]: Список URL, которые ещё не скачаны
     
-    TODO:
-        1. Получить множество скачанных URL через get_downloaded_urls()
-        2. Отфильтровать список urls, оставив только те, которых нет в скачанных
-        3. Вернуть отфильтрованный список
     """
-    # TODO: Реализовать функцию
-    pass
-
+    
+    downloaded_set = get_downloaded_urls(manifest_path)
+    new_urls = [url for url in urls if url not in downloaded_set]
+    return new_urls
