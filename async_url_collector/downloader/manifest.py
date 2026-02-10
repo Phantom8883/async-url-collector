@@ -107,41 +107,29 @@ def read_manifest(manifest_path: Optional[Path] = None) -> List[Dict]:
     Returns:
         List[Dict]: Список всех записей из манифеста
     
-    TODO:
-        1. Определить путь к манифесту
-        2. Проверить, существует ли файл (если нет - вернуть [])
-        3. Открыть файл в режиме 'r'
-        4. Для каждой строки:
-           - Убрать пробелы (strip())
-           - Пропустить пустые строки
-           - Попытаться распарсить через json.loads()
-           - При ошибке парсинга - пропустить строку (try/except)
-           - Добавить в список
-        5. Вернуть список записей
     """
-    # TODO: Реализовать функцию
 
+    # определяем путь к файлу
+    path_manifest = Path(manifest_path) if manifest_path else DOWNLOADS_DIR / MANIFEST_CONFIG['filename']
 
-
-    if manifest_path:
-        path_manifest = manifest_path
-    else:
-        path_manifest = DOWNLOADS_DIR / MANIFEST_CONFIG['filename']
-    result_list = []
     if not path_manifest.exists():
         return []
+    result_list = []
+
+    # Читаем файл посторочно
     with open(path_manifest, 'r', encoding='utf-8') as f:
-
         for line in f:
+            line = line.strip() # Убираем пробелы и переносы строк
 
-            if not line.strip():
+            if not line: # Пропускаем пустые строки
                 continue
 
             try:
-                j = json.loads(line)
+                record = json.loads(line) # парсим JSON
             except json.JSONDecodeError:
                 continue
-            result_list.append(j)
+
+            result_list.append(record)
 
     return result_list
 
@@ -163,14 +151,13 @@ def get_downloaded_urls(manifest_path: Optional[Path] = None) -> set:
     Returns:
         set: Множество URL, которые уже скачаны (только успешные, ok=True)
     
-    TODO:
-        1. Прочитать манифест через read_manifest()
-        2. Отфильтровать только успешно скачанные (ok: True)
-        3. Извлечь URL из каждой записи
-        4. Вернуть set() URL
     """
-    # TODO: Реализовать функцию
-    pass
+
+    manifest_records = read_manifest(manifest_path)
+    successful_records = [r for r in manifest_records if r['ok']]
+    urls_set = set(r['url'] for r in successful_records)
+    return urls_set
+
 
 
 
