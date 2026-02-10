@@ -5,19 +5,22 @@ JSONL (JSON Lines) - формат, где каждая строка это от�
 Удобен для логов и больших объёмов данных.
 """
 
+import asyncio
+import aiofiles
 import json
 from pathlib import Path
 from typing import List, Dict, Optional
 from datetime import datetime
+from ..config import MANIFEST_CONFIG, DOWNLOADS_DIR
 
-# TODO: Импортировать настройки из config
-# from ..config import MANIFEST_CONFIG, DOWNLOADS_DIR
+
 
 
 def save_to_manifest(
     results: List[Dict],
     manifest_path: Optional[Path] = None,
 ) -> Path:
+
     """
     Сохраняет метаданные о скачанных файлах в JSONL файл.
     
@@ -38,8 +41,60 @@ def save_to_manifest(
            - Записать JSON строку через json.dumps() + '\n'
         5. Вернуть путь к файлу
     """
-    # TODO: Реализовать функцию
-    pass
+
+# DOWNLOADS_DIR = PROJECT_ROOT / "downloads"
+
+## Настройки манифеста
+#MANIFEST_CONFIG = {
+#    "filename": "manifest.jsonl",
+#    "fields": ["url", "filename", "path", "size", "sha256", "content_type", "status", "timestamp"],
+#}
+
+    # 1. Определяем путь к манифесту
+    if manifest_path is None:
+        path_manifest = DOWNLOADS_DIR / MANIFEST_CONFIG['filename']
+    else:
+        path_manifest = manifest_path
+
+    # 2. Гарантируем, что директория существует
+    path_manifest.parent.mkdir(parents=True, exist_ok=True)
+
+    # 3. Открываем файл в режиме append
+    with open(path_manifest, 'a', encoding='utf-8') as f:
+
+        # 4. Проходим по результатам загрузки
+        for result in results:
+
+            # 4. Формируем запись манифеста по контракту
+            record = {}
+
+            # 5. Копируем только разрешённые поля
+            for field in MANIFEST_CONFIG['fields']:
+                record[field] = result.get(field)
+
+            # 6. Явно добавляем флаг ok
+            record['ok'] = result.get('ok', False)
+
+            # 7. Если была ошибка — сохраняем её
+            if not record['ok'] and result.get['error']:
+                record['error']
+
+            # 8. Сериализуем и пишем одну строку
+            json_line = json.dumps(result, ensure_ascii=False) # encure_ascii - Unicode-последовательности
+            f.write(json_line + '\n')
+
+    # 9. Возвращаем путь к манифесту
+    return path_manifest
+
+
+
+
+
+
+
+
+
+
 
 
 def read_manifest(manifest_path: Optional[Path] = None) -> List[Dict]:
@@ -65,7 +120,35 @@ def read_manifest(manifest_path: Optional[Path] = None) -> List[Dict]:
         5. Вернуть список записей
     """
     # TODO: Реализовать функцию
-    pass
+
+
+
+    if manifest_path:
+        path_manifest = manifest_path
+    else:
+        path_manifest = DOWNLOADS_DIR / MANIFEST_CONFIG['filename']
+    result_list = []
+    if not path_manifest.exists():
+        return []
+    with open(path_manifest, 'r', encoding='utf-8') as f:
+
+        for line in f:
+
+            if not line.strip():
+                continue
+
+            try:
+                j = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            result_list.append(j)
+
+    return result_list
+
+
+
+
+
 
 
 def get_downloaded_urls(manifest_path: Optional[Path] = None) -> set:
@@ -88,6 +171,8 @@ def get_downloaded_urls(manifest_path: Optional[Path] = None) -> set:
     """
     # TODO: Реализовать функцию
     pass
+
+
 
 
 def filter_new_urls(urls: List[str], manifest_path: Optional[Path] = None) -> List[str]:

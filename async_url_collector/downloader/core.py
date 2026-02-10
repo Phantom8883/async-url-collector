@@ -174,18 +174,11 @@ async def download_one(
                             "timestamp": datetime.utcnow().isoformat(), #?
                         }
 
-
-
-
-
-                    
-
                     content_type = resp.headers.get("Content-Type") #?
                     parsed_url = urllib.parse.urlparse(url) #?
                     file_name = os.path.basename(parsed_url.path) #?
 
                     if not file_name:
-
 
                         # url.encode() - Превращает строку в байты. -> bytes
 
@@ -223,17 +216,10 @@ async def download_one(
                         "sha256": sha256,
                         "content_type": content_type,
                         "error": None,
-                        "timestamp": datetime.utcnow().isoformat(), #?
+                        "timestamp": datetime.utcnow().isoformat(), 
                     }
-                        
 
-
-
-
-
-
-
-            except (asyncio.TimeoutError, aiohttp.ClientError) as e: #?
+            except (asyncio.TimeoutError, aiohttp.ClientError) as e: 
                 if attempt < retries:
                     await asyncio.sleep(retry_delay) 
                     continue
@@ -247,9 +233,9 @@ async def download_one(
                     "sha256": None,
                     "content_type": None,
                     "error": f"Ошибка сети: {str(e)}",
-                    "timestamp": datetime.utcnow().isoformat(), #?
+                    "timestamp": datetime.utcnow().isoformat(), 
                 }
-            except (PermissionError, OSError) as e: #?
+            except (PermissionError, OSError) as e: 
                 return {
                     "url": url,
                     "ok": False,
@@ -260,9 +246,9 @@ async def download_one(
                     "sha256": None,
                     "content_type": None,
                     "error": f"Ошибка файловой системы: {str(e)}",
-                    "timestamp": datetime.utcnow().isoformat(), #?
+                    "timestamp": datetime.utcnow().isoformat(), 
                 }
-            except Exception as e: #?
+            except Exception as e:
                 return {
                     "url": url,
                     "ok": False,
@@ -273,7 +259,7 @@ async def download_one(
                     "sha256": None,
                     "content_type": None,
                     "error": f"Неожиданная ошибка: {str(e)}",
-                    "timestamp": datetime.utcnow().isoformat(), #?
+                    "timestamp": datetime.utcnow().isoformat(), 
                 }
 
 
